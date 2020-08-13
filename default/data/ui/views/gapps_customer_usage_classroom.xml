@@ -1,0 +1,88 @@
+<form>
+  <label>Classroom</label>
+  <search id="base_accounts">
+    <query>`gapps_customer_usage("$domain$", "classroom")`</query>
+    <earliest>$time_restriction.earliest$</earliest>
+    <latest>$time_restriction.latest$</latest>
+  </search>
+  <search id="descriptions">
+    <query>|inputlookup gsuite_descriptions | search service="classroom" | fields name description |eval description = mvindex(split(description, "."), 0)| xyseries name name description | fields - name | filldown | streamstats count | sort - count | head 1</query>
+    <done>
+      <set token="num_courses_created_description">$result.num_courses_created$</set>
+      <set token="num_student_posts_created_description">$result.num_student_posts_created$</set>
+      <set token="num_teacher_posts_created_description">$result.num_teacher_posts_created$</set>
+    </done>
+  </search>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="domain">
+      <label>Domain</label>
+      <choice value="*">All</choice>
+      <search>
+        <query>|`gapps_load_domains`</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>domain</fieldForLabel>
+      <fieldForValue>domain</fieldForValue>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>-2d@d</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <html>
+        More Information: <a href="https://developers.google.com/admin-sdk/reports/v1/appendix/usage/customer/classroom">https://developers.google.com/admin-sdk/reports/v1/appendix/usage/customer/classroom</a>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>General Classroom Stats</title>
+      <single>
+        <title>$num_courses_created_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "num_courses_created" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Courses Created</option>
+      </single>
+      <single>
+        <title>$num_student_posts_created_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "num_student_posts_created" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Student Posts Created</option>
+      </single>
+      <single>
+        <title>$num_teacher_posts_created_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "num_teacher_posts_created" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Teacher Posts Created</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Active Users and Courses</title>
+        <search base="base_accounts">
+          <query>search key="classroom_num_*day*" | rex field=key "classroom_num_(?&lt;days&gt;\d+)day"|eval pk = "Last ".printf("%02d", days)." days: ".mvindex(split(key, "_"), -1) | timechart span=1d avg(value) as value by pk</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>

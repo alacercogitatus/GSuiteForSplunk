@@ -1,0 +1,35 @@
+<form>
+  <label>GSuite KVStore Lookups</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="kvstore_lookup">
+      <label>GSuite KVStore Lookup</label>
+      <search>
+        <query>|rest /servicesNS/-/-/configs/conf-transforms | search title=gapps_kvstore* | stats count by title</query>
+        <earliest>-15m</earliest>
+        <latest>now</latest>
+        <sampleRatio>1</sampleRatio>
+      </search>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>title</fieldForValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>|inputlookup $kvstore_lookup$ | rename _key as A_KEY</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

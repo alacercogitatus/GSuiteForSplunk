@@ -1,0 +1,14 @@
+message_info_id,signature
+1,Default spam classification reason.
+2,Message classified as such because of user's past actions.
+3,Suspicious content.
+4,Suspicious link.
+5,Suspicious attachment.
+6,"Custom policy defined in G Suite Admin Console, Gmail settings."
+7,DMARC.
+8,Domain in public RBLs.
+9,RFC standards violation.
+10,Gmail policy violation.
+11,Machine learning verdict.
+12,Sender reputation.
+13,Blatant spam

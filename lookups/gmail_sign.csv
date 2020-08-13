@@ -1,0 +1,14 @@
+id,signature
+1,Message received by inbound SMTP server
+2,"Message accepted by Gmail and prepared for delivery. This is usually the next step following #1, or the first step if you send from Gmail. For incoming messages, policies with reject dispositions are usually evaluated here; for example, and attachment compliance policy that rejects incoming messages"
+3,"Message was handled by Gmail, for example, delivered to a Gmail mailbox or sent to another server. This is usually the next step following #2. Policies with dispositions other than reject are evaluated here; for example, an attachment compliance policy that strips attachments based on file type or other criteria."
+10,Message sent out by outbound SMTP server
+14,"A temporary error occured when Gmail tried to deliver the message, and the message has been scheduled for retry. This is usually caused by external or internal servers that Gmail talks to being temporarily unavailable; retry later. For example, we tried to deliver the message to an external SMTP server, but got a temporary error (4xx) back."
+18,Message could not be delivered and was bounced
+19,Message was dropped by Gmail
+48,Message received by inbound SMTP server for relay
+49,Message sent via relay by outbound SMTP server
+55,"Message was re-inserted into Gmail, as caused by policies that modify the primary delivery route or envelope recipient."
+68,"Message accepted by Gmail and prepared for delivery. This is similar to #2, with the distinction that the message was accepted from (sent via) a Gmail server"
+69,"The user changed the message’s spam classification, for example, by marking it as spam, phishing, not-spam, in Gmail."
+70,"Message reclassified as spam, phishing, etc., after it was delivered to Gmail."

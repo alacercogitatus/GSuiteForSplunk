@@ -1,0 +1,66 @@
+﻿name,type,description,service
+average_meeting_minutes,integer,This indicates a customer's average duration of meetings in minutes.,meet
+average_meeting_minutes_with_11_to_15_calls,integer,This indicates a customer's average duration of meetings in minutes broken down by a maximum of 11 to 15 concurrent calls.,meet
+average_meeting_minutes_with_16_to_25_calls,integer,This indicates a customer's average duration of meetings in minutes broken down by maximum of 16 to 25 concurrent calls.,meet
+average_meeting_minutes_with_26_to_50_calls,integer,This indicates a customer's average duration of meetings in minutes broken down by maximum of 26 to 50 concurrent calls.,meet
+average_meeting_minutes_with_2_calls,integer,This indicates a customer's average duration of meetings in minutes broken down by maximum of 2 concurrent calls.,meet
+average_meeting_minutes_with_3_to_5_calls,integer,This indicates a customer's average duration of meetings in minutes broken down by maximum of 3 to 5 concurrent calls.,meet
+average_meeting_minutes_with_6_to_10_calls,integer,This indicates a customer's average duration of meetings in minutes broken down by maximum of 6 to 10 concurrent calls.,meet
+lonely_meetings,integer,The number of meetings that have less than 2 concurrent calls. These meetings are not counted in num_meetings and related metrics.,meet
+max_concurrent_usage_chromebase,integer,The number of Chromebase devices connected to internal meetings at the same time.,meet
+max_concurrent_usage_chromebox,integer,The number of Chromebox devices connected to internal meetings at the same time.,meet
+num_1day_active_users,integer,The number of users active in the previous day.,meet
+num_30day_active_users,integer,The number of users active in the previous month.,meet
+num_7day_active_users,integer,The number of users active in the previous week.,meet
+num_calls,integer,The total number of calls organized by users.,meet
+num_calls_android,integer,The total number of calls on the date of the report from Android devices.,meet
+num_calls_by_external_users,integer,The total number of calls by external users to meetings on the date of the report.,meet
+num_calls_by_internal_users,integer,The total number of calls by internal users to meetings on the date of the report.,meet
+num_calls_by_pstn_in_users,integer,The total number of PSTN calls that dialed-in to meetings on the date of the report,meet
+num_calls_by_pstn_out_users,integer,The total number of PSTN calls that dialed-out from meetings on the date of the report,meet
+num_calls_chromebase,integer,The total number of calls on the date of the report by Chromebase devices.,meet
+num_calls_chromebox,integer,The total number of calls on the date of the report by Chromebox devices.,meet
+num_calls_ios,integer,The total number of calls on the date of the report by iOS devices.,meet
+num_calls_jamboard,integer,The total number of calls on the date of the report by Jamboards.,meet
+num_calls_unknown_client,integer,The total number of calls on the date of the report by unknown clients.,meet
+num_calls_web,integer,The total number of calls on the date of the report by web clients.,meet
+num_meetings,integer,The total number of Meet meetings held on the date of the report.,meet
+num_meetings_android,integer,The total number of Meet meetings held on the date of the report that include at least one call from an Android device.,meet
+num_meetings_chromebase,integer,The total number of Meet meetings held on the date of the report that include at least one call from a Chromebase device.,meet
+num_meetings_chromebox,integer,Parameter to indicate a customer's total number of Meet meetings held on the date of the report that include at least one call from a Chromebox device.,meet
+num_meetings_ios,integer,The total number of Meet meetings held on the date of the report that include at least one call from an iOS device.,meet
+num_meetings_jamboard,integer,The total number of Meet meetings held on the date of the report that include at least one call from a Jamboard.,meet
+num_meetings_unknown_client,integer,The total number of Meet meetings held on the date of the report that include at least one call from an unknown client.,meet
+num_meetings_web,integer,The total number of Meet meetings held on the date of the report that include at least one call from a web client.,meet
+num_meetings_with_11_to_15_calls,integer,This indicates a customer's number of meetings broken down by the maximum number of concurrent calls.,meet
+num_meetings_with_16_to_25_calls,integer,This indicates a customer's number of meetings broken down by the maximum number of concurrent calls.,meet
+num_meetings_with_26_to_50_calls,integer,This indicatese a customer's number of meetings broken down by the maximum number of concurrent calls.,meet
+num_meetings_with_2_calls,integer,The number of meetings broken down by the maximum number of concurrent calls.,meet
+num_meetings_with_3_to_5_calls,integer,This indicates a customer's number of meetings broken down by the maximum number of concurrent calls.,meet
+num_meetings_with_6_to_10_calls,integer,This indicates a customer's number of meetings broken down by the maximum number of concurrent calls.,meet
+num_meetings_with_external_users,integer,The total number of Meet meetings that include at least one external user or caller.,meet
+num_meetings_with_pstn_in_users,integer,The total number of Meet meetings held on the date of the report that include at least one user connected through PSTN dial-in.,meet
+num_meetings_with_pstn_out_users,integer,The total number of Meet meetings held on the date of the report that include at least one user connected through PSTN dial-out.,meet
+total_call_minutes,integer,The sum of all connected calls on the date of the report.,meet
+total_call_minutes_android,integer,The total duration of calls on the date of the report by Android devices.,meet
+total_call_minutes_by_external_users,integer,The total duration of external Meet client calls in meetings on the date of the report.,meet
+total_call_minutes_by_internal_users,integer,The total duration of meeting connect calls made by organization users on the date of the report.,meet
+total_call_minutes_by_pstn_in_users,integer,The total duration of PSTN calls dialing into meetings on the date of the report.,meet
+total_call_minutes_by_pstn_out_users,integer,The total duration of PSTN calls dialing out from meetings on the date of the report.,meet
+total_call_minutes_chromebase,integer,The total duration of calls on the date of the report by Chromebase devices.,meet
+total_call_minutes_chromebox,integer,The total duration of calls on the date of the report by Chromebox devices.,meet
+total_call_minutes_ios,integer,The total duration of calls on the date of the report by iOS devices.,meet
+total_call_minutes_jamboard,integer,The total duration of calls on the date of the report by Jamboards.,meet
+total_call_minutes_unknown_client,integer,The total duration of calls on the date of the report by unknown clients.,meet
+total_call_minutes_web,integer,The total duration of calls on the date of the report by web clients.,meet
+total_meeting_minutes,integer,The total meeting duration on the date of the report.,meet
+num_14day_active_courses,integer,Courses with any activity in the last 14 days.,classroom
+num_1day_students,integer,Students who accessed Classroom in the last day.,classroom
+num_1day_teachers,integer,Teachers who accessed Classroom on the provided date.,classroom
+num_30day_students,integer,Students who accessed Classroom in the last 30 days.,classroom
+num_30day_teachers,integer,Teachers who accessed Classroom in the last 30 days.,classroom
+num_7day_students,integer,Students who accessed Classroom in the last 7 days.,classroom
+num_7day_teachers,integer,Teachers who accessed Classroom in the last 7 days.,classroom
+num_courses_created,integer,Courses created on the provided date.,classroom
+num_student_posts_created,integer,Posts created by students on the provided date.,classroom
+num_teacher_posts_created,integer,Posts created by teachers on the provided date.,classroom

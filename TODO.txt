@@ -1,0 +1,15 @@
+This is a list of possible things for me TODO.
+
+1. Setup a field in setup.xml to set an alert email address.
+1a. Setup Schededuled Searches to automatically alert based on certain default information.
+
+2. More integration with other Google Services
+2a. Use a splunk command to pull domain information.
+2b. Use a splunk command to pull user information (vacation, forwards, calendars, document acls, etc)
+2c. Use a splunk command to pull group information.
+
+3. More in-depth dashboards (if possible) 
+
+4. Dashboards to show internal errors and problems with Modular Input.
+
+5. Ability to Sync Revisions of Google Docs (CSV)

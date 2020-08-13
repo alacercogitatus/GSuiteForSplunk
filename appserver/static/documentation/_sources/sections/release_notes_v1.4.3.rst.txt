@@ -1,0 +1,7 @@
+Version 1.4.3
+-------------
+
+- Improvement
+
+    - [GSUITE-28] Enable TA changes for video conferencing
+    - Removed "Drive Data Enhancements" due to volume and error issues

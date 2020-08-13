@@ -1,0 +1,32 @@
+<form>
+  <label>GSuite Spreadsheet Overview</label>
+  <fieldset submitButton="false">
+    <input type="time" token="time_restriction">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>eventtype=gsuite_spreadsheets "metadata.spreadsheet_id"="*" | rename metadata.sheet_properties.* as s_* |eval sheets = s_title.": ".s_sheetId| stats latest(order) as order latest(destination) as destination values(sheets) as available_sheets by metadata.spreadsheet_id</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

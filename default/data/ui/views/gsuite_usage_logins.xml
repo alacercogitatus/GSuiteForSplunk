@@ -1,0 +1,88 @@
+<form>
+  <label>Login Usage</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="domain">
+      <label>Domain</label>
+      <choice value="*">All</choice>
+      <fieldForLabel>domain</fieldForLabel>
+      <fieldForValue>domain</fieldForValue>
+      <search>
+        <query>|`gapps_load_domains`</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time Restriction</label>
+      <default>
+        <earliest>-7d@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Top Users</title>
+      <chart>
+        <search base="token_base">
+          <query>stats count as ecnt by actor.email | sort 0 - ecnt | head 10</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Top Login Types</title>
+      <chart>
+        <search base="token_base">
+          <query>stats count by login_type| sort 0 - count | head 10</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Top Challenge Method</title>
+      <chart>
+        <search base="token_base">
+          <query>stats count as cnt by login_challenge_method| sort 0 - cnt | head 10</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search id="token_base">
+          <query>eventtype=googleapps source=gapps:$domain$ sourcetype=gapps:report:login | rename events{}.parameters{}.* as param_* | stats count latest(param_is_suspicious) as suspicious latest(param_login_type) as login_type latest(param_login_challenge_method{}) as login_challenge_method by actor.email</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

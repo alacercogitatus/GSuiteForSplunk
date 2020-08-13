@@ -1,0 +1,10 @@
+key,key_label
+param_accounts_is_2sv_enforced,2FA Enforced
+param_accounts_is_2sv_enrolled,2FA Enrolled
+param_accounts_is_archived,Archived
+param_accounts_is_delegated_admin,Delegated Admin
+param_accounts_is_disabled,Disabled
+param_accounts_is_less_secure_apps_access_allowed,Less Secure Apps Access Allowed
+param_accounts_is_super_admin,Super Admin
+param_accounts_is_suspended,Suspended
+param_accounts_password_strength,Password Strength

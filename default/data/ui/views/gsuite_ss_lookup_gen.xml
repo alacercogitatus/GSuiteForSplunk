@@ -1,0 +1,70 @@
+<form>
+  <label>G Suite Indexed Spreadsheets</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="ga_ss">
+      <label>Google Spreadsheet</label>
+      <search>
+        <query>eventtype=gsuite_spreadsheets NOT destination IN (transform, kvstore)|rename metadata.* as md_* | stats count by md_spreadsheet_title md_spreadsheet_id</query>
+        <done>
+          <set token="gsuite_ss_title">$row.md_spreadsheet_title$</set>
+        </done>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>md_spreadsheet_title</fieldForLabel>
+      <fieldForValue>md_spreadsheet_id</fieldForValue>
+    </input>
+    <input type="dropdown" token="ga_sheet_id">
+      <label>Sheet Name</label>
+      <fieldForLabel>sp_title</fieldForLabel>
+      <fieldForValue>sp_sheetId</fieldForValue>
+      <search>
+        <query>eventtype=gsuite_spreadsheets metadata.spreadsheet_id="$ga_ss$"|rename metadata.* as md_* | rename md_sheet_properties.* as sp_* | stats count by md_spreadsheet_title md_spreadsheet_id sp_sheetId sp_title</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time Restriction</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="radio" token="field_type">
+      <label>Field Type</label>
+      <choice value="ordered_fields">Ordered</choice>
+      <choice value="fields">Correlate</choice>
+      <default>fields</default>
+      <initialValue>fields</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <html>
+      This is a "Spreadsheet" generator for data-ingested Google spreadsheets. It will take the latest values for each title and sheet, and combine them in a `lazy` assembly. To use this generated spreadsheet in other lookups, open the resulting table in search and add an <strong>outputlookup</strong> command that will designate the final location of the data, either a kvstore or csv file or lookup definition. Create a scheduled report and the lookup will be automatically updated on your own designated schedule.
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>$ga_ss$</title>
+      <table>
+        <search>
+          <query>eventtype=gsuite_spreadsheets  "metadata.spreadsheet_id"="$ga_ss$" "metadata.sheet_properties.sheetId"="$ga_sheet_id$"| stats  latest($field_type$.*) as * by metadata.spreadsheet_title row_index | rename metadata.spreadsheet_title as title | fields - row_index title</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,172 @@
+<form>
+  <label>User Detail</label>
+  <search id="base_user">
+    <query>entity.userEmail="$user$" domain="$domain$" `gapps_usage("user")` | fields entity* param* domain| stats
+            latest(*) as * by _time
+        </query>
+    <earliest>$time_restriction.earliest$</earliest>
+    <latest>$time_restriction.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="domain">
+      <label>Domain</label>
+      <choice value="*">All</choice>
+      <search>
+        <query>|`gapps_load_domains`</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>domain</fieldForLabel>
+      <fieldForValue>domain</fieldForValue>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="user">
+      <label>User Email</label>
+      <search>
+        <query>domain=$domain$ `gapps_usage("user")` | stats count by entity.userEmail</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>entity.userEmail</fieldForLabel>
+      <fieldForValue>entity.userEmail</fieldForValue>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time Restriction</label>
+      <default>
+        <earliest>-7d@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>Name</title>
+        <search base="base_user">
+          <query>stats count by param_accounts_admin_set_name | fields - count</query>
+        </search>
+      </single>
+      <single>
+        <title>Creation Time</title>
+        <search base="base_user">
+          <query>stats count by param_accounts_creation_time | fields - count</query>
+        </search>
+      </single>
+      <single>
+        <title>Delegated Admin</title>
+        <search base="base_user">
+          <query>stats count by param_accounts_is_delegated_admin | fields - count</query>
+        </search>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <title>Super Admin</title>
+        <search base="base_user">
+          <query>stats count by param_accounts_is_super_admin | fields - count</query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="useColors">0</option>
+      </single>
+      <single>
+        <title>Disabled</title>
+        <search base="base_user">
+          <query>stats count by param_accounts_is_disabled | fields - count</query>
+        </search>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <title>Total Quota</title>
+        <search base="base_user">
+          <query>timechart latest(param_accounts_used_quota_in_percentage) by date|where isnotnull(NULL)
+                    </query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70]</option>
+        <option name="unit">%</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <title>Gmail Quota</title>
+        <search base="base_user">
+          <query>timechart latest(param_accounts_gmail_used_quota_in_percentage) by date|where
+                        isnotnull(NULL)
+                    </query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70]</option>
+        <option name="unit">%</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <title>Drive Quota</title>
+        <search base="base_user">
+          <query>timechart latest(param_accounts_drive_used_quota_in_percentage) by date|where
+                        isnotnull(NULL)
+                    </query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70]</option>
+        <option name="unit">%</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <title>GPlus Photos</title>
+        <search base="base_user">
+          <query>timechart latest(param_accounts_gplus_photos_used_quota_in_percentage) by date|where
+                        isnotnull(NULL)
+                    </query>
+        </search>
+        <option name="colorMode">none</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70]</option>
+        <option name="unit">%</option>
+        <option name="useColors">1</option>
+      </single>
+      <single>
+        <title>Archived</title>
+        <search base="base_user">
+          <query>stats count by param_accounts_is_archived | fields - count</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Account Attributes</title>
+        <search base="base_user">
+          <query>fields - param_accounts_creation_time param_accounts_*quota*_in_percentage param_accounts_is*
+                        | stats latest(*) as * | transpose 1000 | rename column as "Attribute" "row 1" as Value | eval
+                        Attribute = replace(replace(Attribute, "param_",""),"_"," ")
+                    </query>
+        </search>
+        <option name="count">100</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Directory Fields</title>
+        <search>
+          <query>eventtype=googleapps sourcetype="gapps:admin:directory:users" primaryEmail="$user$"| fields - date_* sourcetype source index modular_input_consumption_time timestamp linecount punct time*| stats values(*) as * by primaryEmail | transpose 1000</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+        </search>
+        <option name="count">100</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>

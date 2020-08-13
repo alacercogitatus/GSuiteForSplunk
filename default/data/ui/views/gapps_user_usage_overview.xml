@@ -1,0 +1,92 @@
+<form>
+  <label>User Overview</label>
+  <search id="base_user_usage">
+    <query>domain="$domain$" `gapps_usage("user")` | fields entity* param* domain | stats latest(*) as * by
+            entity.userEmail
+        </query>
+    <earliest>$time_restriction.earliest$</earliest>
+    <latest>$time_restriction.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="domain">
+      <label>Domain</label>
+      <choice value="*">All</choice>
+      <search>
+        <query>|`gapps_load_domains`</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>domain</fieldForLabel>
+      <fieldForValue>domain</fieldForValue>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time</label>
+      <default>
+        <earliest>-7d@h</earliest>
+        <latest>-2d@d</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Distinct Users</title>
+      <single>
+        <search>
+          <query>domain="$domain$" `gapps_usage("user")`  | timechart dc(entity.userEmail) as user_count | where user_count &gt; 0</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Distinct Users</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Super Admins</title>
+      <single>
+        <search>
+          <query>domain="$domain$" `gapps_usage("user")` | search param_accounts_is_super_admin=true | timechart dc(entity.userEmail) as user_count | where user_count &gt; 0</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Disabled Users</title>
+      <single>
+        <search>
+          <query>domain="$domain$" `gapps_usage("user")` | search param_accounts_is_disabled=true | timechart dc(entity.userEmail) as user_count | where user_count &gt; 0</query>
+          <earliest>$time_restriction.earliest$</earliest>
+          <latest>$time_restriction.latest$</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <search base="base_user_usage">
+          <query>fields entity.userEmail param_accounts_is*  param_accounts_password_strength | untable entity.userEmail key value |lookup gsuite_labels key OUTPUT key_label| eval key_label = coalesce(key_label, key) |stats dc(entity.userEmail) as user_count by key_label value</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">collapsed</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.size">small</option>
+      </chart>
+    </panel>
+  </row>
+</form>

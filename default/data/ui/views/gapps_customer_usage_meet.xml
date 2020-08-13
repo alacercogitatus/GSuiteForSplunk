@@ -1,0 +1,128 @@
+<form>
+  <label>Meet</label>
+  <search id="base_accounts">
+    <query>`gapps_customer_usage("$domain$", "meet")`</query>
+    <earliest>$time_restriction.earliest$</earliest>
+    <latest>$time_restriction.latest$</latest>
+  </search>
+  <search id="descriptions">
+    <query>|inputlookup gsuite_descriptions | search service="meet" | fields name description |eval description = mvindex(split(description, "."), 0)| xyseries name name description | fields - name | filldown | streamstats count | sort - count | head 1</query>
+    <done>
+      <set token="lonely_meeting_description">$result.lonely_meetings$</set>
+      <set token="average_meeting_minutes_description">$result.average_meeting_minutes$</set>
+      <set token="num_calls_description">$result.num_calls$</set>
+      <set token="num_meetings_description">$result.num_meetings$</set>
+      <set token="total_meeting_minutes_description">$result.total_meeting_minutes$</set>
+      <set token="total_call_minutes_description">$result.total_call_minutes$</set>
+    </done>
+  </search>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="domain">
+      <label>Domain</label>
+      <choice value="*">All</choice>
+      <search>
+        <query>|`gapps_load_domains`</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>domain</fieldForLabel>
+      <fieldForValue>domain</fieldForValue>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>-2d@d</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <html>
+        More Information: <a href="https://developers.google.com/admin-sdk/reports/v1/appendix/usage/customer/meet">https://developers.google.com/admin-sdk/reports/v1/appendix/usage/customer/meet</a>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>General Meeting Stats</title>
+      <single>
+        <title>$lonely_meeting_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "lonely_meetings" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Lonely Meetings</option>
+      </single>
+      <single>
+        <title>$average_meeting_minutes_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "average_meeting_minutes" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Average Meeting Minutes</option>
+      </single>
+      <single>
+        <title>$num_calls_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "num_calls" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Number of Calls</option>
+      </single>
+      <single>
+        <title>$total_call_minutes_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "total_call_minutes" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Total Call Minutes</option>
+      </single>
+      <single>
+        <title>$num_meetings_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "num_meetings" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Number of Meetings</option>
+      </single>
+      <single>
+        <title>$total_meeting_minutes_description$</title>
+        <search base="base_accounts">
+          <query>| search gsuite_name = "total_meeting_minutes" | timechart span=1d avg(value) as value by description</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">Total Meeting Minutes</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Sum Call Minutes by Client</title>
+        <search base="base_accounts">
+          <query>search key="meet_total_call_minutes_*" NOT key="*by*" | eval svc = replace(key, "meet_total_call_minutes_", "") | timechart span=1d sum(value) as value by svc</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Number of Meetings by Client</title>
+        <search base="base_accounts">
+          <query>search key="meet_num_meetings_*" NOT key="*with*" | eval svc = replace(key, "meet_num_meetings_", "") | timechart span=1d sum(value) as value by svc</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>

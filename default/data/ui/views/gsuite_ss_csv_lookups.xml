@@ -1,0 +1,32 @@
+<form>
+  <label>GSuite CSV Lookups</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="csv_lookup">
+      <label>GSuite CSV Lookup</label>
+      <search>
+        <query>|rest /servicesNS/-/-/configs/conf-transforms | search filename=* AND title=gapps_csv* | stats count by title</query>
+        <earliest>-15m</earliest>
+        <latest>now</latest>
+        <sampleRatio>1</sampleRatio>
+      </search>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>title</fieldForValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>|inputlookup $csv_lookup$</query>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

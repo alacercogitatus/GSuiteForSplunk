@@ -1,0 +1,32 @@
+<nav color="#757575">
+  <view label="Event Summary" name="GoogleAppsEventSummary" default="true"/>
+  <view name="search"  />
+  <collection label="Customer Usage">
+    <view source="unclassified" match="gapps_customer_usage_"/>
+  </collection>
+  <collection label="User Usage">
+    <view source="unclassified" match="gapps_user_usage_"/>
+  </collection>
+  <collection label="Reports">
+    <view source="unclassified" match="gsuite_usage_" />
+  </collection>
+  <collection label="Spreadsheets">
+    <view name="gsuite_ss_overview"/>
+    <view name="gsuite_ss_csv_lookups"/>
+    <view name="gsuite_ss_lookup_gen"/>
+    <view name="gsuite_kvstore_lookups"/>
+  </collection>
+  <collection label="Searches &amp; Reports">
+    <collection label="Google Apps">
+        <saved source="all" match="googleapps"/>
+    </collection>
+    <a href="/manager/search/saved/searches">Manage Searches &amp; Reports</a>
+  </collection>
+  <collection label="Configurations">
+    <view name="App_Config" label="Application Configuration"/>
+    <view name="app_health_overview"/>
+      <view name="application_usage"/>
+      <view name="knowledge_base"/>
+  </collection>
+  <view name="About" />
+</nav>

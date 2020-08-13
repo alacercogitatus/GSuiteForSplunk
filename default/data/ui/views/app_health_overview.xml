@@ -1,0 +1,46 @@
+<form>
+  <label>Application Health</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="timey_wimey">
+      <label>Time</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Errors</title>
+        <search>
+          <query>eventtype=googleapps sourcetype=GSuiteForSplunk:error | rename errors{}.* as * |eval  fileloc = filename.":".line| stats count by exception_type msg fileloc input_name</query>
+          <earliest>$timey_wimey.earliest$</earliest>
+          <latest>$timey_wimey.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Internal Log Errors</title>
+        <search>
+          <query>eventtype=gsuite_internal log_level=ERROR | where NOT like(message, "{%}") | stats count latest(exception_line) as LineNumber by sourcetype message</query>
+          <earliest>$timey_wimey.earliest$</earliest>
+          <latest>$timey_wimey.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,94 @@
+<form>
+  <label>Accounts</label>
+  <search id="base_accounts">
+    <query>`gapps_customer_usage("$domain$", "accounts")`</query>
+    <earliest>$time_restriction.earliest$</earliest>
+    <latest>$time_restriction.latest$</latest>
+  </search>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="domain">
+      <label>Domain</label>
+      <choice value="*">All</choice>
+      <search>
+        <query>|`gapps_load_domains`</query>
+        <earliest>$time_restriction.earliest$</earliest>
+        <latest>$time_restriction.latest$</latest>
+      </search>
+      <fieldForLabel>domain</fieldForLabel>
+      <fieldForValue>domain</fieldForValue>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="time" token="time_restriction">
+      <label>Time</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>-2d@d</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Accounts</title>
+      <single>
+        <title>Users</title>
+        <search base="base_accounts">
+          <query> timechart span=1d avg(value) as value by key | fields _time accounts_num_users | where isnotnull(accounts_num_users)</query>
+        </search>
+      </single>
+      <single>
+        <title>Super Admins</title>
+        <search base="base_accounts">
+          <query>search key=*super* |timechart span=1d avg(value) as value by key | fields _time accounts_num_super_admins| where isnotnull(accounts_num_super_admins)</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+      <single>
+        <title>Delegated Admins</title>
+        <search base="base_accounts">
+          <query>search key=*delegated* |timechart span=1d avg(value) as value by key | fields _time accounts_num_delegated_admins| where isnotnull(accounts_num_delegated_admins)</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+      <single>
+        <title>Locked Accounts</title>
+        <search base="base_accounts">
+          <query>search key=*locked* |timechart span=1d avg(value) as value by key | fields _time accounts_num_locked_users| where isnotnull(accounts_num_locked_users)</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+      <single>
+        <title>Suspended Accounts</title>
+        <search base="base_accounts">
+          <query>search key=*suspended* |timechart span=1d avg(value) as value by key | fields _time accounts_num_suspended_users| where isnotnull(accounts_num_suspended_users)</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+      <single>
+        <title>Disabled Accounts</title>
+        <search base="base_accounts">
+          <query>search key=*disabled* |timechart span=1d avg(value) as value by key | fields _time accounts_num_disabled_accounts| where isnotnull(accounts_num_disabled_accounts)</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+      <single>
+        <title>2FA Enabled</title>
+        <search base="base_accounts">
+          <query>search key=*2sv_enrolled* |timechart span=1d avg(value) as value by key |fields _time accounts_num_users_2sv_enrolled| where isnotnull(accounts_num_users_2sv_enrolled)</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Logins</title>
+        <search base="base_accounts">
+          <query>search key="*num*login*" |fields _time key value | timechart span=1d sum(value) by key |rename accounts_num_*day_logins as "Logins in last * Days"| fillnull value=0 | addtotals | where Total &gt; 0 | fields - Total</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>
