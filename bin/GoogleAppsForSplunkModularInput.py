@@ -685,7 +685,8 @@ class GoogleAppsForSplunkModularInput(ModularInput):
             "status=starting source={} time_of_gmtime={} timezone_of_localtime={}".format(
                 source, time.strftime("%Y-%m-%dT%H:%M:%S%z  %Z", time.gmtime()),
                 time.strftime("%Y-%m-%dT%H:%M:%S%z %Z", time.localtime())))
-        service = build('alertcenter', 'v1beta1', http=self.http_session)
+        credentials = self.get_alert_center_sa_credentials()
+        service = build('alertcenter', 'v1beta1', credentials=credentials)
         interval = 3600
         kwargs_interval = kwargs["interval"]
         self.info("operation=check_interval type={} is_integer={} interval={}".format(type(kwargs_interval),
@@ -713,7 +714,9 @@ class GoogleAppsForSplunkModularInput(ModularInput):
         page_token = None
         # createTime >=
         # https://developers.google.com/admin-sdk/alertcenter/guides/query-filters
-        filter_items = ['createTime>={}'.format(start_time)]
+        # TODO: Google kept complaining it does not recognize the query filter, hence temporarily commented out
+        # filter_items = ['createTime>={}'.format(start_time)]
+        filter_items = []
         alert_transpose = {"token": "Domain wide takeout",
                            "gmail": "Gmail phishing",
                            "identity": "Google identity",
@@ -732,7 +735,9 @@ class GoogleAppsForSplunkModularInput(ModularInput):
                 self.debug("operation=has_page source={} param_type={} params={}".format(source,
                                                                                          type(params),
                                                                                          params))
-                current_page = service.alerts().list(**params).execute()
+                # TODO: Update when the above query filter works
+                current_page = service.alerts().list().execute()
+                # current_page = service.alerts().list(**params).execute()
                 self.debug(
                     "operation=has_page source={} current_page={}".format(source, current_page))
                 if "alerts" in current_page:
@@ -752,6 +757,23 @@ class GoogleAppsForSplunkModularInput(ModularInput):
 
         self.info("action=found_events num_events={0} source={1} start_time=\"{2}\" ".format(
             total_count, source, start_time))
+
+    def process_alert_api_evts(self, evt, application_name):
+        return evt
+
+    def get_alert_center_sa_credentials(self):
+        # returns service account credentials from the service account JSON file downloaded from google
+        # subject needs to be a user account with permission to view alert center.
+        try:
+            from google.oauth2 import service_account
+            service_account_file = os.path.join(self._app_local_directory,
+                                                "GoogleApps." + self.get_config("domain").lower()+".alert_center.json")
+            scopes = ["https://www.googleapis.com/auth/apps.alerts"]
+            return service_account.Credentials.from_service_account_file(service_account_file,
+                                                                         subject="your account e.g. admin@example.com",scope=scopes)
+        except Exception as e:
+            self.print_error("Getting OAUTH Credentials Failed: %s" % e)
+            sys.exit(1)
 
     def get_drive_information(self, fileId, fields="*"):
         try:
